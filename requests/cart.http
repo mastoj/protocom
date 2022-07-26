@@ -1,0 +1,9 @@
+# Add item sample
+POST http://localhost:5000/cart
+Content-Type: application/json
+
+{
+    "cartId": "c11cfc6c-f692-4762-8789-112646a8db3d",
+    "productId": "item1",
+    "quantity": 1
+}
