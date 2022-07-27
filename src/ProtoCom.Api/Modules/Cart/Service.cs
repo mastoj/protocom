@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using Proto;
 
 namespace Modules.Cart;
 
@@ -34,10 +35,14 @@ public record RemoveCartItem(Guid CartId, string ProductId, int Quantity) : Cart
 
 public interface Service<TEvent, TCommand, TState>
 {
-    static abstract TState InitialState();
-    abstract TState Evolve(TState state, TEvent @event);
-    abstract IEnumerable<TEvent> Decide(TState state, TCommand command);
+    abstract Decider<TEvent, TCommand, TState> CreateDecider();
 }
+
+public record Decider<TEvent, TCommand, TState>(
+    Func<TCommand, TState, IEnumerable<TEvent>> Decide,
+    Func<TState, TEvent, TState> Evolve,
+    Func<TState> InitialState
+);
 
 // State
 public record CartState(
@@ -82,7 +87,7 @@ public class CartService : Service<CartEvent, CartCommand, CartState>
         return new CartState(state.CartId, items);
     }
 
-    public IEnumerable<CartEvent> Decide(CartState state, CartCommand command)
+    public IEnumerable<CartEvent> Decide(CartCommand command, CartState state)
     {
         switch (command)
         {
@@ -109,5 +114,48 @@ public class CartService : Service<CartEvent, CartCommand, CartState>
             throw new InvalidOperationException("Cart does not exist");
         }
         yield return new CartItemRemoved(command.CartId, command.ProductId, command.Quantity);
+    }
+
+    public Decider<CartEvent, CartCommand, CartState> CreateDecider()
+    {
+        return new Decider<CartEvent, CartCommand, CartState>(
+            Decide,
+            Evolve,
+            InitialState
+        );
+    }
+}
+
+public class DeciderActor<TEvent, TCommand, TState> : IActor
+    where TState : notnull
+{
+    public Decider<TEvent, TCommand, TState> Decider { get; }
+    public TState State { get; private set; }
+
+    public DeciderActor(Decider<TEvent, TCommand, TState> decider)
+    {
+        Decider = decider ?? throw new ArgumentNullException(nameof(decider));
+        State = decider.InitialState() ?? throw new ArgumentNullException(nameof(decider.InitialState));
+    }
+
+    public static DeciderActor<TEvent, TCommand, TState> Create(Decider<TEvent, TCommand, TState> decider)
+    {
+        return new DeciderActor<TEvent, TCommand, TState>(decider);
+    }
+
+    public Task ReceiveAsync(IContext context)
+    {
+        switch (context.Message)
+        {
+            case Started msg: 
+                Console.WriteLine("Decider started");
+                break;
+            case TCommand command:
+                var events = Decider.Decide(command, State);
+                State = events.Aggregate(State, Decider.Evolve);
+                context.Respond(State);
+                break;
+        }
+        return Task.CompletedTask;
     }
 }

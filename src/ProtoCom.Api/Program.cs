@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Carter;
 using Microsoft.AspNetCore.Http.Json;
+using Proto;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.IncludeFields = true;
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
+
+builder.Services.AddProtoActor();
 
 var app = builder.Build();
 
@@ -30,7 +33,19 @@ app.MapCarter();
 
 app.Run("http://*:5000");
 
-record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
+
+public static class ProtoActorExtensions
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public static void AddProtoActor(this IServiceCollection services)
+    {
+        services.AddSingleton(sp => {
+            var system = new ActorSystem();
+            return system;
+        });
+        services.AddSingleton<IRootContext>(sp => {
+            var system = sp.GetService<ActorSystem>()!;
+            var context = system.Root;
+            return context; 
+        });
+    }
 }
