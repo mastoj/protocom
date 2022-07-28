@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+option csharp_namespace = "ProtoCom.Api.Modules.Cart";
+
+message Product {
+    string id = 1;
+    string name = 2;
+    double price = 3;
+}
+
+message CartItem {
+    Product product = 1;
+    int32 quantity = 2;
+}
+
+message Cart {
+    string cart_id = 1;
+    map<string, CartItem> items = 2;
+}
+
+message CartResponse {
+    optional Cart cart = 1;
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+    optional Status status = 2;
+    optional string error_message = 3;
+}
+
+message AddItemRequest {
+    string cart_id = 1;
+    string product_id = 2;
+    int32 quantity = 3;
+}
+
+message RemoveItemRequest {
+    string cart_id = 1;
+    string product_id = 2;
+}
+
+message GetCartRequest {
+    string cart_id = 1;
+}
+
+message ClearCartRequest {
+    string cart_id = 1;
+}
+
+// message CheckoutRequest {
+
+// }
+
+
+// message GetSmartBulbStateResponse {
+//   string state = 1;
+// }
+
+// message SmartBulbStateChangedRequest {
+//   string smart_bulb_identity = 1;
+//   bool is_on = 2;
+// }
+
+
+
+// public abstract record CartEvent(Guid CartId);
+// public record CartCreated(Guid CartId) : CartEvent(CartId);
+// public record CartItemAdded(Guid CartId, Product Product, int Quantity) : CartEvent(CartId);
+// public record CartItemRemoved(Guid CartId, string ProductId, int Quantity) : CartEvent(CartId);
+
+// // Commands
+// public abstract record CartCommand(Guid CartId);
+// public record AddCartItem(Guid CartId, string ProductId, int Quantity) : CartCommand(CartId);
+// public record RemoveCartItem(Guid CartId, string ProductId, int Quantity) : CartCommand(CartId);

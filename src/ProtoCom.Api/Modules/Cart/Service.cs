@@ -5,7 +5,7 @@ using Proto;
 namespace Modules.Cart;
 
 // DTOs
-public record Product(string Id, string Name, decimal Price);
+public record Product(string Id, string Name, double Price);
 
 // Dependencies
 public class ProductRepository
@@ -13,7 +13,7 @@ public class ProductRepository
     private Random Random = new Random();
     public Product GetProduct(string id)
     {
-        return new Product(id, "Product " + id, new decimal(Random.NextDouble()*2000 + 10));
+        return new Product(id, "Product " + id, Random.NextDouble()*2000 + 10);
     }
 }
 
@@ -28,7 +28,7 @@ public record CartItemRemoved(Guid CartId, string ProductId, int Quantity) : Car
 
 // Commands
 public abstract record CartCommand(Guid CartId);
-public record AddCartItem(Guid CartId, string ProductId, int Quantity) : CartCommand(CartId);
+public record AddCartItem(Guid CartId, Product Product, int Quantity) : CartCommand(CartId);
 public record RemoveCartItem(Guid CartId, string ProductId, int Quantity) : CartCommand(CartId);
 
 // Service
@@ -103,7 +103,7 @@ public class CartService : Service<CartEvent, CartCommand, CartState>
         {
             throw new InvalidOperationException("Cart already exists");
         }
-        var product = productRepository.GetProduct(command.ProductId);
+        var product = command.Product;
         yield return new CartCreated(command.CartId);
         yield return new CartItemAdded(command.CartId, product, command.Quantity);
     }
