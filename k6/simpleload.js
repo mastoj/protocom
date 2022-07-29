@@ -34,5 +34,4 @@ export default function () {
         "productId": productId,
         "quantity": 1
     }), params);
-    sleep(1);
 }
