@@ -1,5 +1,7 @@
 using Carter;
 using Microsoft.AspNetCore.Mvc;
+using Polly;
+using Polly.Retry;
 using Proto;
 using Proto.Cluster;
 using ProtoCom.Api.Modules.Cart;
@@ -26,15 +28,26 @@ public class CartGrain : CartGrainBase
         Console.WriteLine("==> Created actor: " + clusterIdentity.Identity);
     }
 
+    private static AsyncRetryPolicy _policy = Policy
+            .Handle<Exception>()
+            .WaitAndRetryAsync(
+                5,
+                retryAttempt => TimeSpan.FromSeconds(3)
+            );
+
     private async Task<Product> GetProduct(string productId)
     {
         var productGrain = Context
             .Cluster()
             .GetProductGrain(productId);
         
-        var product = await productGrain.GetProduct(new GetProductRequest() {
-            ProductId = productId
-        }, CancellationToken.None);
+        // var product = await _policy.ExecuteAsync(async () =>
+        // {
+            var product = await productGrain.GetProduct(new GetProductRequest() {
+                ProductId = productId
+            }, CancellationToken.None);
+        //     return product;
+        // });
 
 
         if(product is null || product.ProductStatus == ProductStatus.MissingProduct)

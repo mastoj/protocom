@@ -29,8 +29,8 @@ public class ProductGrain : ProductGrainBase
     private static Random _random = new();
     public override Task<GetProductResponse> GetProduct(GetProductRequest request)
     {
-        if(_random.NextInt64(100) > 70)
-            Context.Stop(Context.Self);
+        // if(_random.NextInt64(100) > 98)
+        //     throw new Exception("Crash");
         var product = _productDb!.GetValueOrDefault(request.ProductId, null);
         return Task.FromResult(new GetProductResponse() {
             Product = product,

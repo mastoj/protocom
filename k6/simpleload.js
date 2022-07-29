@@ -14,6 +14,11 @@ const products =
             }
         }));
 
+const cartIds = 
+    Array
+        .from(Array(100).keys())
+        .map(i => uuidv4());
+
 const productIds = products.map(p => p.product.id);
 
 const params = {
@@ -29,10 +34,10 @@ export function setup() {
 
 export default function () {
     const productId = productIds[Math.floor(Math.random()*productIds.length)];
+    // const cartId = cartIds[Math.floor(Math.random()*cartIds.length)];
     http.post('http://localhost:5000/cart', JSON.stringify({
-        "cartId": uuidv4(),
+        "cartId": uuidv4(), //cartId.toString(),
         "productId": productId,
         "quantity": 1
     }), params);
-    sleep(1);
 }
