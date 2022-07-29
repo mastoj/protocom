@@ -1,4 +1,5 @@
 using Modules.Cart;
+using Modules.Product;
 using Proto;
 using Proto.Cluster;
 using Proto.Cluster.Partition;
@@ -6,6 +7,7 @@ using Proto.Cluster.Testing;
 using Proto.DependencyInjection;
 using Proto.Remote.GrpcNet;
 using ProtoCom.Api.Modules.Cart;
+using ProtoCom.Api.Modules.Product;
 
 namespace ProtoCom.Api;
 
@@ -33,14 +35,22 @@ public static class ActorSystemConfiguration
                     clusterProvider: new TestProvider(new TestProviderOptions(), new InMemAgent()),
                     identityLookup: new PartitionIdentityLookup()
                 )
-                    .WithClusterKind(
-        kind: CartProcessActor.Kind,
-        prop: Props.FromProducer(() =>
-            new CartProcessActor(
-                (context, clusterIdentity) => new CartGrain(context, clusterIdentity)
-            )
-        )
-    );
+                .WithClusterKind(
+                    kind: CartGrainActor.Kind,
+                    prop: Props.FromProducer(() =>
+                        new CartGrainActor(
+                            (context, clusterIdentity) => new CartGrain(context, clusterIdentity)
+                        )
+                    )
+                )
+                .WithClusterKind(
+                    kind: ProductGrainActor.Kind,
+                    prop: Props.FromProducer(() =>
+                        new ProductGrainActor(
+                            (context, clusterIdentity) => new ProductGrain(context)
+                        )
+                    )
+                );
 
             // create the actor system
 

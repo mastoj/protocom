@@ -26,8 +26,9 @@
   </ItemGroup> -->
 
   <ItemGroup>
-    <Protobuf Include="contracts/CartMessages.proto" />
-    <ProtoGrain Include="contracts/CartGrain.proto"  AdditionalImportDirs="contracts" />
+    <Protobuf Include="contracts/Messages.proto" />
+    <ProtoGrain Include="contracts/CartGrain.proto" AdditionalImportDirs="contracts" />
+    <ProtoGrain Include="contracts/ProductGrain.proto" AdditionalImportDirs="contracts" />
   </ItemGroup>
 
 </Project>

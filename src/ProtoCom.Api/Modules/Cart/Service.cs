@@ -9,7 +9,7 @@ public record Product(string Id, string Name, double Price);
 
 // Dependencies
 public class ProductRepository
-{
+{    
     private Random Random = new Random();
     public Product GetProduct(string id)
     {

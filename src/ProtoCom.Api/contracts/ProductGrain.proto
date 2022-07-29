@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option csharp_namespace = "ProtoCom.Api.Modules.Product";
+
+import "./Messages.proto";
+import "google/protobuf/empty.proto";
+
+service ProductGrain {
+    rpc AddProduct(AddProductRequest) returns (google.protobuf.Empty);
+    rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+}

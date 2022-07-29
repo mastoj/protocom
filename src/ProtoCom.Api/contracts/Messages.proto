@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option csharp_namespace = "ProtoCom.Api.Modules.Cart";
+import "google/protobuf/empty.proto";
 
 message Product {
     string id = 1;
@@ -45,6 +46,26 @@ message GetCartRequest {
 
 message ClearCartRequest {
     string cart_id = 1;
+}
+
+message AddProductRequest {
+    Product product = 1;
+}
+
+message GetProductRequest {
+    string product_id = 1;
+}
+
+enum ProductStatus {
+    MISSING_PRODUCT = 0;
+    SUCCESS = 1;
+}
+message GetProductResponse {
+    ProductStatus productStatus = 1;
+    oneof data {
+        Product Product = 2;
+        google.protobuf.Empty Empty = 3; 
+    }
 }
 
 // message CheckoutRequest {

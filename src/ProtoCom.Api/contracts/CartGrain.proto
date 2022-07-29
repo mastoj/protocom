@@ -2,10 +2,10 @@ syntax = "proto3";
 
 option csharp_namespace = "ProtoCom.Api.Modules.Cart";
 
-import "./CartMessages.proto";
+import "./Messages.proto";
 import "google/protobuf/empty.proto";
 
-service CartProcess {
+service CartGrain {
     rpc AddItem(AddItemRequest) returns (CartResponse);
     rpc RemoveItem(RemoveItemRequest) returns (CartResponse);
     rpc GetCart(GetCartRequest) returns (CartResponse);

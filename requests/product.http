@@ -1,0 +1,15 @@
+### Add item sample
+POST http://localhost:5000/product
+Content-Type: application/json
+
+{
+    "product": {
+        "id": "item1",
+        "name": "Magic item 2",
+        "proce": 299
+    }
+}
+
+### Get item sample
+GET http://localhost:5000/product/item1
+Content-Type: application/json
