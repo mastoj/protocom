@@ -47,7 +47,7 @@ public static class ActorSystemConfiguration
                     kind: ProductGrainActor.Kind,
                     prop: Props.FromProducer(() =>
                         new ProductGrainActor(
-                            (context, clusterIdentity) => new ProductGrain(context)
+                            (context, clusterIdentity) => new ProductGrain(context, clusterIdentity)
                         )
                     )
                 );

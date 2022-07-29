@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Carter;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Mvc;
@@ -11,25 +12,29 @@ namespace Modules.Product;
 public class ProductGrain : ProductGrainBase
 {
 
-    public ProductGrain(IContext context) : base(context)
-    {
+    private static ConcurrentDictionary<string, ProtoCom.Api.Modules.Cart.Product> _productDb = new();
 
+    public ProductGrain(IContext context, ClusterIdentity clusterIdentity) : base(context)
+    {
+        Console.WriteLine("===> Started product grain: " + clusterIdentity.Identity);
         // Product = MissingProduct;
     }
 
-    public ProtoCom.Api.Modules.Cart.Product Product { get; set; }
-
     public override Task AddProduct(AddProductRequest request)
     {
-        Product = request.Product;
+        _productDb.AddOrUpdate(request.Product.Id, request.Product, (key, oldValue) => request.Product);
         return Task.CompletedTask;
     }
 
+    private static Random _random = new();
     public override Task<GetProductResponse> GetProduct(GetProductRequest request)
     {
+        if(_random.NextInt64(100) > 70)
+            Context.Stop(Context.Self);
+        var product = _productDb!.GetValueOrDefault(request.ProductId, null);
         return Task.FromResult(new GetProductResponse() {
-            Product = Product,
-            ProductStatus = Product is null ? ProductStatus.MissingProduct : ProductStatus.Success
+            Product = product,
+            ProductStatus = product is null ? ProductStatus.MissingProduct : ProductStatus.Success
         });
     }
 }
@@ -49,6 +54,7 @@ public class Endpoints : ICarterModule
         var grain = actorSystem
             .Cluster()
             .GetProductGrain(body.Product.Id);
+        Console.WriteLine("==> Adding product: " + body.Product.Price);
         await grain.AddProduct(body, CancellationToken.None);
         res.StatusCode = 200;
     }

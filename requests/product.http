@@ -6,7 +6,7 @@ Content-Type: application/json
     "product": {
         "id": "item1",
         "name": "Magic item 2",
-        "proce": 299
+        "price": 299
     }
 }
 
