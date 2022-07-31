@@ -1,5 +1,7 @@
 using Carter;
 using Microsoft.AspNetCore.Mvc;
+using Polly;
+using Polly.Retry;
 using Proto;
 using Proto.Cluster;
 using ProtoCom.Api.Modules.Cart;
@@ -26,15 +28,25 @@ public class CartGrain : CartGrainBase
         Console.WriteLine("==> Created actor: " + clusterIdentity.Identity);
     }
 
+    private static async Task<GetProductResponse> GetProduct(ProductGrainClient grain, string productId)
+    {
+        var policy = Policy.Handle<Exception>().RetryAsync(10, (ex, retryCount) =>
+        {
+            Console.WriteLine($"====> Retrying {retryCount}");
+        });
+        return await policy.ExecuteAsync(async () => await grain.GetProduct(new GetProductRequest() { ProductId = productId }, CancellationToken.None));
+    }
+
     private async Task<Product> GetProduct(string productId)
     {
         var productGrain = Context
             .Cluster()
             .GetProductGrain(productId);
         
-        var product = await productGrain.GetProduct(new GetProductRequest() {
-            ProductId = productId
-        }, CancellationToken.None);
+        var product =  await GetProduct(productGrain, productId);
+        //  await productGrain.GetProduct(new GetProductRequest() {
+        //     ProductId = productId
+        // }, CancellationToken.None);
 
 
         if(product is null || product.ProductStatus == ProductStatus.MissingProduct)
@@ -45,11 +57,20 @@ public class CartGrain : CartGrainBase
         return new Product(product.Product.Id, product.Product.Name, product.Product.Price);
     }
 
+    private static AsyncRetryPolicy _policy = Policy
+        .Handle<Exception>()
+        .WaitAndRetryAsync(
+            5,
+            retryAttempt => TimeSpan.FromSeconds(retryAttempt)
+        );
+
     public override async Task<CartResponse> AddItem(AddItemRequest request)
     {
         var cartId = Guid.Parse(request.CartId);
         var quantity = request.Quantity;
-        var product = await GetProduct(request.ProductId);
+        // var product = await _policy.ExecuteAsync(() => GetProduct(request.ProductId));
+        var product = await GetProduct(request.ProductId);        
+        // GetProduct(request.ProductId);
         var result = Decider.Decide(new AddCartItem(cartId, product, quantity), State);
         State = result.Aggregate(State, Decider.Evolve);
         var cart = new ProtoCom.Api.Modules.Cart.Cart()

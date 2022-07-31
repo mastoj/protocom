@@ -47,7 +47,10 @@ public static class ActorSystemConfiguration
                     kind: ProductGrainActor.Kind,
                     prop: Props.FromProducer(() =>
                         new ProductGrainActor(
-                            (context, clusterIdentity) => new ProductGrain(context, clusterIdentity)
+                            (context, clusterIdentity) => {
+                                context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
+                                return new ProductGrain(context, clusterIdentity);
+                            } 
                         )
                     )
                 );
