@@ -2,9 +2,11 @@ using Modules.Cart;
 using Modules.Product;
 using Proto;
 using Proto.Cluster;
+using Proto.Cluster.Kubernetes;
 using Proto.Cluster.Partition;
 using Proto.Cluster.Testing;
 using Proto.DependencyInjection;
+using Proto.Remote;
 using Proto.Remote.GrpcNet;
 using ProtoCom.Api.Modules.Cart;
 using ProtoCom.Api.Modules.Product;
@@ -13,7 +15,7 @@ namespace ProtoCom.Api;
 
 public static class ActorSystemConfiguration
 {
-    public static void AddActorSystem(this IServiceCollection serviceCollection)
+    public static void AddActorSystem(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddSingleton(provider =>
         {
@@ -25,14 +27,16 @@ public static class ActorSystemConfiguration
             // remote configuration
 
             var remoteConfig = GrpcNetRemoteConfig
-                .BindToLocalhost();
+                .BindToAllInterfaces(advertisedHost: configuration["ProtoActor:AdvertisedHost"])
+                .WithProtoMessages(MessagesReflection.Descriptor);
 
             // cluster configuration
 
             var clusterConfig = ClusterConfig
                 .Setup(
                     clusterName: "ProtoClusterTutorial",
-                    clusterProvider: new TestProvider(new TestProviderOptions(), new InMemAgent()),
+                    clusterProvider: new KubernetesProvider(),
+                    // clusterProvider: new TestProvider(new TestProviderOptions(), new InMemAgent()),
                     identityLookup: new PartitionIdentityLookup()
                 )
                 .WithClusterKind(

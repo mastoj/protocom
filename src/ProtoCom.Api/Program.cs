@@ -18,7 +18,7 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 builder.Services.AddHostedService<ActorSystemClusterHostedService>();
 
-builder.Services.AddActorSystem();
+builder.Services.AddActorSystem(builder.Configuration);
 
 var app = builder.Build();
 var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
@@ -31,10 +31,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.Lifetime.ApplicationStopping.Register(() => {
+    Console.WriteLine("ApplicationStopping called, sleeping for 10s");
+    
+    Thread.Sleep(5000);
+});
+
 app.MapCarter();
 
 app.Run("http://*:5000");
-
 
 // public static class ProtoActorExtensions
 // {
