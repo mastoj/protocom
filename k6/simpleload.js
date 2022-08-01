@@ -21,6 +21,8 @@ const cartIds =
         .from(Array(2000).keys())
         .map(i => uuidv4());
 
+//const host = "localhost";
+const host = "13.93.31.100";
 
 const params = {
     headers: {
@@ -29,14 +31,14 @@ const params = {
 };
 export function setup() {
     products.map(product => {
-        http.post('http://localhost:5000/product', JSON.stringify(product), params);
+        http.post(`http://${host}:5000/product`, JSON.stringify(product), params);
     });
 }
 
 export default function () {
     const productId = productIds[Math.floor(Math.random()*productIds.length)];
     const cartId = cartIds[Math.floor(Math.random()*cartIds.length)];
-    http.post('http://localhost:5000/cart', JSON.stringify({
+    http.post(`http://${host}:5000/cart`, JSON.stringify({
         "cartId": cartId,
         "productId": productId,
         "quantity": 1
