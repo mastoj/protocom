@@ -2,6 +2,7 @@ using System.Text.Json;
 using Carter;
 using Microsoft.AspNetCore.Http.Json;
 using Proto;
+using Proto.Cluster;
 using ProtoCom.Api;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +32,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Lifetime.ApplicationStopping.Register(() => {
+app.Lifetime.ApplicationStopping.Register(async () => {
+    var actorSystem = app.Services.GetService<ActorSystem>();
+    await actorSystem.Cluster().ShutdownAsync();
     Console.WriteLine("ApplicationStopping called, sleeping for 10s");
     
     Thread.Sleep(5000);

@@ -70,7 +70,7 @@ const deploy = new Deployment("deploy", {
         }
     },
     spec: {
-        replicas: 3,
+        replicas: 8,
         selector: {
             matchLabels: {
                 app: releaseName,
@@ -89,15 +89,15 @@ const deploy = new Deployment("deploy", {
                 },
                 containers: [{
                     name: releaseName,
-                    image: "pulumiaksdemo.azurecr.io/protocom:2.0.2",
+                    image: "pulumiaksdemo.azurecr.io/protocom:2.0.3",
                     imagePullPolicy: "Always",
-                    lifecycle: {
-                        preStop: {
-                            exec: {
-                                command: ["/bin/sh", "-c", "sleep 20"]
-                            }
-                        }
-                    },
+                    // lifecycle: {
+                    //     preStop: {
+                    //         exec: {
+                    //             command: ["/bin/sh", "-c", "sleep 20"]
+                    //         }
+                    //     }
+                    // },
                     env: [
                         {
                             name: "ASPNETCORE_URLS",
