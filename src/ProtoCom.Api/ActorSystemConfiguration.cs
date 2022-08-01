@@ -39,7 +39,11 @@ public static class ActorSystemConfiguration
                     kind: CartGrainActor.Kind,
                     prop: Props.FromProducer(() =>
                         new CartGrainActor(
-                            (context, clusterIdentity) => new CartGrain(context, clusterIdentity)
+                            (context, clusterIdentity) =>
+                            {
+                                context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
+                                return new CartGrain(context, clusterIdentity);
+                            }
                         )
                     )
                 )
@@ -47,10 +51,11 @@ public static class ActorSystemConfiguration
                     kind: ProductGrainActor.Kind,
                     prop: Props.FromProducer(() =>
                         new ProductGrainActor(
-                            (context, clusterIdentity) => {
+                            (context, clusterIdentity) =>
+                            {
                                 context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
                                 return new ProductGrain(context, clusterIdentity);
-                            } 
+                            }
                         )
                     )
                 );

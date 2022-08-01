@@ -20,6 +20,18 @@ public class ProductGrain : ProductGrainBase
         // Product = MissingProduct;
     }
 
+    public override Task OnReceive()
+    {
+        switch(Context.Message) {
+            case ReceiveTimeout _:
+                Context.PoisonAsync(Context.Self);
+                break;
+            default: break;
+        }
+        return Task.CompletedTask;
+    } 
+
+
     public override Task AddProduct(AddProductRequest request)
     {
         _productDb.AddOrUpdate(request.Product.Id, request.Product, (key, oldValue) => request.Product);
@@ -28,7 +40,7 @@ public class ProductGrain : ProductGrainBase
 
     public override Task OnStopped()
     {
-        Console.WriteLine("Stopped for some reason: ");
+        Console.WriteLine("==> Stopped: " + Context.ClusterIdentity()?.Identity);
         return base.OnStopped();
     }
 
