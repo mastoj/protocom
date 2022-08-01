@@ -26,11 +26,18 @@ public class ProductGrain : ProductGrainBase
         return Task.CompletedTask;
     }
 
+    public override Task OnStopped()
+    {
+        Console.WriteLine("Stopped for some reason: ");
+        return base.OnStopped();
+    }
+
     private static Random _random = new();
     public override Task<GetProductResponse> GetProduct(GetProductRequest request)
     {
         if(_random.NextInt64(100) > 70)
-            Context.Stop(Context.Self);
+            throw new Exception("KILL");
+            // Context.Stop(Context.Self);
         var product = _productDb!.GetValueOrDefault(request.ProductId, null);
         return Task.FromResult(new GetProductResponse() {
             Product = product,
