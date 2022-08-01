@@ -16,6 +16,12 @@ const products =
 
 const productIds = products.map(p => p.product.id);
 
+const cartIds =
+    Array
+        .from(Array(2000).keys())
+        .map(i => uuidv4());
+
+
 const params = {
     headers: {
         'Content-Type': 'application/json',
@@ -29,8 +35,9 @@ export function setup() {
 
 export default function () {
     const productId = productIds[Math.floor(Math.random()*productIds.length)];
+    const cartId = cartIds[Math.floor(Math.random()*cartIds.length)];
     http.post('http://localhost:5000/cart', JSON.stringify({
-        "cartId": uuidv4(),
+        "cartId": cartId,
         "productId": productId,
         "quantity": 1
     }), params);
