@@ -28,6 +28,17 @@ public class CartGrain : CartGrainBase
         Console.WriteLine("==> Created actor: " + clusterIdentity.Identity);
     }
 
+    public override Task OnReceive()
+    {
+        switch(Context.Message) {
+            case ReceiveTimeout _:
+                Context.PoisonAsync(Context.Self);
+                break;
+            default: break;
+        }
+        return Task.CompletedTask;
+    } 
+
     private static async Task<GetProductResponse> GetProduct(ProductGrainClient grain, string productId)
     {
         var policy = Policy.Handle<Exception>().RetryAsync(10, (ex, retryCount) =>
