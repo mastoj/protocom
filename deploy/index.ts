@@ -89,7 +89,7 @@ const deploy = new Deployment("deploy", {
                 },
                 containers: [{
                     name: releaseName,
-                    image: "pulumiaksdemo.azurecr.io/protocom:2.0.3",
+                    image: "pulumiaksdemo.azurecr.io/protocom:2.0.4",
                     imagePullPolicy: "Always",
                     // lifecycle: {
                     //     preStop: {

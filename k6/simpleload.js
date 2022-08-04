@@ -22,7 +22,7 @@ const cartIds =
         .map(i => uuidv4());
 
 //const host = "localhost";
-const host = "13.93.31.100";
+const host = "20.8.118.193";
 
 const params = {
     headers: {

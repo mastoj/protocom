@@ -32,12 +32,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Lifetime.ApplicationStopping.Register(async () => {
+app.Lifetime.ApplicationStopping.Register(() => {
     var actorSystem = app.Services.GetService<ActorSystem>();
-    await actorSystem.Cluster().ShutdownAsync();
-    Console.WriteLine("ApplicationStopping called, sleeping for 10s");
-    
     Thread.Sleep(5000);
+    Console.WriteLine("Stopping actor system");
+    actorSystem.Cluster().ShutdownAsync().Wait();
+    // Console.WriteLine("ApplicationStopping called, sleeping for 10s");
+    
+    // Thread.Sleep(5000);
 });
 
 app.MapCarter();
