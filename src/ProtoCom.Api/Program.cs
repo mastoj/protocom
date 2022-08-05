@@ -3,7 +3,12 @@ using Carter;
 using Microsoft.AspNetCore.Http.Json;
 using Proto;
 using Proto.Cluster;
+using Proto.Cluster.Kubernetes;
+using Proto.Cluster.Testing;
+using Proto.Remote;
+using Proto.Remote.GrpcNet;
 using ProtoCom.Api;
+using ProtoCom.Api.Modules.Cart;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +25,23 @@ builder.Services.Configure<JsonOptions>(options =>
 builder.Services.AddHostedService<ActorSystemClusterHostedService>();
 
 builder.Services.AddActorSystem(builder.Configuration);
+
+if(builder.Environment.IsDevelopment())
+{
+    Console.WriteLine("==> Development mode");
+    builder.Services.AddSingleton<IClusterProvider>(new TestProvider(new TestProviderOptions(), new InMemAgent()));
+    builder.Services.AddSingleton(
+        GrpcNetRemoteConfig.BindToLocalhost()
+    );
+}
+else {
+    builder.Services.AddSingleton<IClusterProvider>(new KubernetesProvider());
+    builder.Services.AddSingleton(
+        GrpcNetRemoteConfig
+            .BindToAllInterfaces(advertisedHost: builder.Configuration["ProtoActor:AdvertisedHost"])
+            .WithProtoMessages(MessagesReflection.Descriptor)
+    );
+}
 
 var app = builder.Build();
 var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();

@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{07D55995-85A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoCom.Api", "src\ProtoCom.Api\ProtoCom.Api.csproj", "{8BF3F621-8A9D-4DBB-8D50-6C1589200ACC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoCom.App", "src\ProtoCom.App\ProtoCom.App.csproj", "{628A9C24-6D5D-422C-AFBE-B04AE1A741F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +22,13 @@ Global
 		{8BF3F621-8A9D-4DBB-8D50-6C1589200ACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BF3F621-8A9D-4DBB-8D50-6C1589200ACC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BF3F621-8A9D-4DBB-8D50-6C1589200ACC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{628A9C24-6D5D-422C-AFBE-B04AE1A741F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{628A9C24-6D5D-422C-AFBE-B04AE1A741F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{628A9C24-6D5D-422C-AFBE-B04AE1A741F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{628A9C24-6D5D-422C-AFBE-B04AE1A741F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8BF3F621-8A9D-4DBB-8D50-6C1589200ACC} = {07D55995-85AB-4E02-B3F3-446772D680FF}
+		{628A9C24-6D5D-422C-AFBE-B04AE1A741F0} = {07D55995-85AB-4E02-B3F3-446772D680FF}
 	EndGlobalSection
 EndGlobal

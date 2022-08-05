@@ -21,8 +21,8 @@ const cartIds =
         .from(Array(2000).keys())
         .map(i => uuidv4());
 
-//const host = "localhost";
-const host = "20.8.118.193";
+const host = "localhost";
+//const host = "20.8.118.193";
 
 const params = {
     headers: {
