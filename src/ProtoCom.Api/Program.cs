@@ -3,6 +3,7 @@ using Carter;
 using Microsoft.AspNetCore.Http.Json;
 using Proto;
 using Proto.Cluster;
+using Proto.Cluster.Consul;
 using Proto.Cluster.Kubernetes;
 using Proto.Cluster.Testing;
 using Proto.Remote;
@@ -29,7 +30,13 @@ builder.Services.AddActorSystem(builder.Configuration);
 if(builder.Environment.IsDevelopment())
 {
     Console.WriteLine("==> Development mode");
-    builder.Services.AddSingleton<IClusterProvider>(new TestProvider(new TestProviderOptions(), new InMemAgent()));
+    ConsulProviderConfig config = new ConsulProviderConfig();
+    builder.Services.AddSingleton<IClusterProvider>(
+                new ConsulProvider(config, conf => {
+                    conf.Address = new Uri("http://localhost:8500");
+                }));
+
+    // builder.Services.AddSingleton<IClusterProvider>(new TestProvider(new TestProviderOptions(), new InMemAgent()));
     builder.Services.AddSingleton(
         GrpcNetRemoteConfig.BindToLocalhost()
     );

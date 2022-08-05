@@ -13,7 +13,7 @@ namespace ProtoCom.Api;
 
 public static class ActorSystemConfiguration
 {
-    public static void AddActorSystem(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static void AddAppActorSystem(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddSingleton(provider =>
         {

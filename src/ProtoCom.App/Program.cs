@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Proto.Cluster;
+using Proto.Cluster.Consul;
 using Proto.Cluster.Kubernetes;
 using Proto.Cluster.Testing;
 using Proto.Remote;
@@ -12,12 +13,17 @@ using ProtoCom.Api.Modules.Cart;
 using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
-        services.AddActorSystem(hostContext.Configuration);
+        services.AddAppActorSystem(hostContext.Configuration);
 
         if(hostContext.HostingEnvironment.IsDevelopment())
         {
             Console.WriteLine("==> Development mode");
-            services.AddSingleton<IClusterProvider>(new TestProvider(new TestProviderOptions(), new InMemAgent()));
+            ConsulProviderConfig config = new ConsulProviderConfig();
+            services.AddSingleton<IClusterProvider>(
+                new ConsulProvider(config, conf => {
+                    conf.Address = new Uri("http://localhost:8500");
+                }));
+                // new TestProvider(new TestProviderOptions(), new InMemAgent()));
             services.AddSingleton(
                 GrpcNetRemoteConfig.BindToLocalhost()
             );
