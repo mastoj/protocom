@@ -25,8 +25,8 @@ public static class ActorSystemConfiguration
 
             // remote configuration
 
-            var remoteConfig = GrpcNetRemoteConfig
-                .BindToAllInterfaces(advertisedHost: configuration["ProtoActor:AdvertisedHost"])
+            var remoteConfig = provider.GetService<GrpcNetRemoteConfig>()
+                // .BindToAllInterfaces(advertisedHost: configuration["ProtoActor:AdvertisedHost"])
                 .WithProtoMessages(MessagesReflection.Descriptor);
 
             // cluster configuration

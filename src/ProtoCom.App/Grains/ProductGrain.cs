@@ -6,7 +6,9 @@ using ProtoCom.Contracts;
 public class ProductGrain : ProductGrainBase
 {
 
-    private static ConcurrentDictionary<string, Product> _productDb = new();
+    private static ConcurrentDictionary<string, Product> _productDb = 
+        new(Enumerable.Range(0, 100)
+            .ToDictionary(i => i.ToString(), i => new Product { Id = i.ToString(), Name = $"Product {i}", Price = 100 + i }));
 
     public ProductGrain(IContext context, ClusterIdentity clusterIdentity) : base(context)
     {

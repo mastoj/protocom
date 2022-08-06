@@ -29,11 +29,11 @@ const params = {
         'Content-Type': 'application/json',
     },
 };
-export function setup() {
-    products.map(product => {
-        http.post(`http://${host}:5000/product`, JSON.stringify(product), params);
-    });
-}
+// export function setup() {
+//     products.map(product => {
+//         http.post(`http://${host}:5000/product`, JSON.stringify(product), params);
+//     });
+// }
 
 export default function () {
     const productId = productIds[Math.floor(Math.random()*productIds.length)];

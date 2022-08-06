@@ -24,10 +24,20 @@ public class Endpoints : ICarterModule
 
     public async Task HandleCreate([FromServices] ActorSystem actorSystem, HttpRequest req, HttpResponse res, [FromBody] AddItemRequest body)
     {
-        var result = await actorSystem
-            .Cluster()
-            .GetCartGrain(body.CartId.ToString())
-            .AddItem(body, CancellationToken.None);
+        var policy = Policy.Handle<Exception>().WaitAndRetryAsync(10, (count) =>
+        {
+            Console.WriteLine($"====> Retrying {count}");
+            return new TimeSpan(0, 0, 0, 0, count*100);
+        });
+
+        var result = await policy.ExecuteAsync(async () => {
+            var result = await actorSystem
+                .Cluster()
+                .GetCartGrain(body.CartId.ToString())
+                .AddItem(body, CancellationToken.None);
+            return result;
+        });
+
 
         // var result = await context.RequestAsync<CartState>(cart, body);
         await res.WriteAsJsonAsync(result);

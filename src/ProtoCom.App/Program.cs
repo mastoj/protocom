@@ -36,9 +36,20 @@ using var host = Host.CreateDefaultBuilder(args)
                     .WithProtoMessages(MessagesReflection.Descriptor)
             );
         }
-        services.AddHostedService<ProtoComHostedService>();
+        services
+            .AddHostedService<ProtoComHostedService>();
     })
     .Build();
+
+// app.Lifetime.ApplicationStopping.Register(() => {
+//     var actorSystem = app.Services.GetService<ActorSystem>();
+//     Thread.Sleep(5000);
+//     Console.WriteLine("Stopping actor system");
+//     actorSystem.Cluster().ShutdownAsync().Wait();
+//     // Console.WriteLine("ApplicationStopping called, sleeping for 10s");
+    
+//     // Thread.Sleep(5000);
+// });
 
 var loggerFactory = host.Services.GetRequiredService<ILoggerFactory>();
 Proto.Log.SetLoggerFactory(loggerFactory);
