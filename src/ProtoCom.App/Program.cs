@@ -8,7 +8,7 @@ using Proto.Cluster.Testing;
 using Proto.Remote;
 using Proto.Remote.GrpcNet;
 using ProtoCom.Api;
-using ProtoCom.Api.Modules.Cart;
+using ProtoCom.Contracts;
 
 using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>

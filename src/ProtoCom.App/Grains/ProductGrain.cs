@@ -1,13 +1,12 @@
 using System.Collections.Concurrent;
 using Proto;
 using Proto.Cluster;
-using ProtoCom.Api.Modules.Cart;
-using ProtoCom.Api.Modules.Product;
+using ProtoCom.Contracts;
 
 public class ProductGrain : ProductGrainBase
 {
 
-    private static ConcurrentDictionary<string, ProtoCom.Api.Modules.Cart.Product> _productDb = new();
+    private static ConcurrentDictionary<string, Product> _productDb = new();
 
     public ProductGrain(IContext context, ClusterIdentity clusterIdentity) : base(context)
     {

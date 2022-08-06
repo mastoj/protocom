@@ -4,8 +4,7 @@ using Polly;
 using Polly.Retry;
 using Proto;
 using Proto.Cluster;
-using ProtoCom.Api.Modules.Cart;
-using ProtoCom.Api.Modules.Product;
+using ProtoCom.Contracts;
 
 namespace Modules.Cart;
 

@@ -6,8 +6,7 @@ using Proto.Cluster.Partition;
 using Proto.DependencyInjection;
 using Proto.Remote;
 using Proto.Remote.GrpcNet;
-using ProtoCom.Api.Modules.Cart;
-using ProtoCom.Api.Modules.Product;
+using ProtoCom.Contracts;
 
 namespace ProtoCom.Api;
 

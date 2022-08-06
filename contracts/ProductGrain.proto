@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "ProtoCom.Api.Modules.Product";
+option csharp_namespace = "ProtoCom.Contracts";
 
 import "./Messages.proto";
 import "google/protobuf/empty.proto";

@@ -4,8 +4,7 @@ using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Mvc;
 using Proto;
 using Proto.Cluster;
-using ProtoCom.Api.Modules.Cart;
-using ProtoCom.Api.Modules.Product;
+using ProtoCom.Contracts;
 
 namespace Modules.Product;
 

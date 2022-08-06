@@ -4,8 +4,7 @@ using Polly;
 using Polly.Retry;
 using Proto;
 using Proto.Cluster;
-using ProtoCom.Api.Modules.Cart;
-using ProtoCom.Api.Modules.Product;
+using ProtoCom.Contracts;
 
 public class CartGrain : CartGrainBase
 {
@@ -75,7 +74,7 @@ public class CartGrain : CartGrainBase
         // GetProduct(request.ProductId);
         var result = Decider.Decide(new AddCartItem(cartId, product, quantity), State);
         State = result.Aggregate(State, Decider.Evolve);
-        var cart = new ProtoCom.Api.Modules.Cart.Cart()
+        var cart = new Cart()
         {
             CartId = cartId.ToString(),
         };
@@ -85,7 +84,8 @@ public class CartGrain : CartGrainBase
                 item.Key,
                 new CartItem()
                 {
-                    Product = new ProtoCom.Api.Modules.Cart.Product{
+                    Product = new ProtoCom.Contracts.Product
+                    {
                         Id = item.Value.Product.Id,
                         Name = item.Value.Product.Name,
                         Price = item.Value.Product.Price,
