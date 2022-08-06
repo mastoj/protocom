@@ -23,13 +23,9 @@
     <PackageReference Include="Proto.Remote" Version="0.33.0" />
   </ItemGroup>
 
-  <!-- <ItemGroup>
+  <ItemGroup>
     <Protobuf Include="../../contracts/Messages.proto" />
     <ProtoGrain Include="../../contracts/CartGrain.proto" AdditionalImportDirs="../../contracts" />
     <ProtoGrain Include="../../contracts/ProductGrain.proto" AdditionalImportDirs="../../contracts" />
-  </ItemGroup>
- -->
-  <ItemGroup>
-    <ProjectReference Include="..\ProtoCom.Api\ProtoCom.Api.csproj" />
   </ItemGroup>
 </Project>
