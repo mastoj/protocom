@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package protocom.contracts;
+
 option csharp_namespace = "ProtoCom.Contracts";
 
 import "./Messages.proto";
