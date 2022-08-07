@@ -17,3 +17,17 @@ services:
     container_name: client-1
     restart: always
     command: "agent -node=client-1 -join=172.17.0.2"
+
+  db:
+    image: "postgres:14"
+    container_name: "docugendb"
+    environment:
+        POSTGRES_USER: protocom
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: protocom
+        PGDATA: pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ".postgres/.db:/var/lib/postgresql/data"
+    restart: unless-stopped

@@ -1,3 +1,4 @@
+using Marten;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Proto;
@@ -55,7 +56,7 @@ public static class ActorSystemConfiguration
                             (context, clusterIdentity) =>
                             {
                                 context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
-                                return new ProductGrain(context, clusterIdentity);
+                                return new ProductGrain(context, clusterIdentity, provider.GetService<IDocumentStore>());
                             }
                         )
                     )

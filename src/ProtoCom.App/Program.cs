@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Marten;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Proto.Cluster;
@@ -9,6 +10,7 @@ using Proto.Remote;
 using Proto.Remote.GrpcNet;
 using ProtoCom.Api;
 using ProtoCom.Contracts;
+using Weasel.Core;
 
 using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
@@ -37,7 +39,11 @@ using var host = Host.CreateDefaultBuilder(args)
             );
         }
         services
-            .AddHostedService<ProtoComHostedService>();
+            .AddHostedService<ProtoComHostedService>()
+            .AddMarten(options => {
+                options.Connection("host=localhost;port=5432;database=protocom;user id=protocom;password=password");
+                options.AutoCreateSchemaObjects = AutoCreate.All;
+            });
     })
     .Build();
 
