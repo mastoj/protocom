@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Modules.Cart;
 using Proto.Cluster;
 using Proto.Cluster.Consul;
 using Proto.Cluster.Kubernetes;
@@ -43,6 +44,9 @@ using var host = Host.CreateDefaultBuilder(args)
             .AddMarten(options => {
                 options.Connection("host=localhost;port=5432;database=protocom;user id=protocom;password=password");
                 options.AutoCreateSchemaObjects = AutoCreate.All;
+                options.Events.AddEventType(typeof(CartCreated));
+                options.Events.AddEventType(typeof(CartItemAdded));
+                options.Events.AddEventType(typeof(CartItemRemoved));
             });
     })
     .Build();

@@ -1,4 +1,5 @@
 
+using Marten;
 using Modules.Cart;
 using Polly;
 using Polly.Retry;
@@ -9,13 +10,27 @@ using ProtoCom.Contracts;
 public class CartGrain : CartGrainBase
 {
     public Decider<CartEvent, CartCommand, CartState> Decider { get; private set; }
+
+    private IDocumentStore _documentStore;
+
     public CartState State { get; private set; }
 
-    public CartGrain(IContext context, Proto.Cluster.ClusterIdentity clusterIdentity) : base(context)
+    public CartGrain(IContext context, Proto.Cluster.ClusterIdentity clusterIdentity, IDocumentStore documentStore) : base(context)
     {
         Decider = new CartService().CreateDecider();
-        State = Decider.InitialState();
-        Console.WriteLine("==> Created actor: " + clusterIdentity.Identity);
+        _documentStore = documentStore;
+        using var session = _documentStore.OpenSession();
+        Console.WriteLine("==> Getting data for: " + clusterIdentity.Identity);
+        try {
+            var eventData = session.Events.FetchStream(clusterIdentity.Identity);
+            Console.WriteLine("==> Event data: " + eventData);
+            var events = eventData.Select(e => e.Data).Cast<CartEvent>().ToList();
+            State = events.Aggregate(Decider.InitialState(), Decider.Evolve);
+            Console.WriteLine("==> Created actor: " + clusterIdentity.Identity);
+        }
+        catch (Exception e) {
+            State = Decider.InitialState();
+        }
     }
 
     public override Task OnReceive()
@@ -74,6 +89,11 @@ public class CartGrain : CartGrainBase
         // GetProduct(request.ProductId);
         var result = Decider.Decide(new AddCartItem(cartId, product, quantity), State);
         State = result.Aggregate(State, Decider.Evolve);
+
+        var session = _documentStore.OpenSession();
+        session.Events.Append(cartId, result!);
+        session.SaveChanges();
+
         var cart = new Cart()
         {
             CartId = cartId.ToString(),
@@ -108,7 +128,30 @@ public class CartGrain : CartGrainBase
 
     public override Task<CartResponse> GetCart(GetCartRequest request)
     {
-        throw new NotImplementedException();
+        var cart = new Cart()
+        {
+            CartId = State.CartId.ToString(),
+        };
+        State.Items.ToList().ForEach(item =>
+        {
+            cart.Items.Add(
+                item.Key,
+                new CartItem()
+                {
+                    Product = new ProtoCom.Contracts.Product
+                    {
+                        Id = item.Value.Product.Id,
+                        Name = item.Value.Product.Name,
+                        Price = item.Value.Product.Price,
+                    },
+                    Quantity = item.Value.Quantity,
+                }
+            );
+        });
+
+        return Task.FromResult(new CartResponse() {
+            Cart = cart
+        });
     }
 
     public override Task<CartResponse> RemoveItem(RemoveItemRequest request)

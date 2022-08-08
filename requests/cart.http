@@ -7,3 +7,7 @@ Content-Type: application/json
     "productId": "item1",
     "quantity": 1
 }
+
+### Get cart
+GET http://localhost:5000/cart/c11cfc6c-f692-4762-8789-112646a8db3d
+Content-Type: application/json

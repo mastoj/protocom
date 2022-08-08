@@ -44,7 +44,7 @@ public static class ActorSystemConfiguration
                             (context, clusterIdentity) =>
                             {
                                 context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
-                                return new CartGrain(context, clusterIdentity);
+                                return new CartGrain(context, clusterIdentity, provider.GetService<IDocumentStore>());
                             }
                         )
                     )

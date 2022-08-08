@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### Get item sample
-GET http://localhost:5000/product/item1234234
+GET http://localhost:5000/product/item1
 Content-Type: application/json
 
 ### Add item sample
