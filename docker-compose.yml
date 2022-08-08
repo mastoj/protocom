@@ -16,7 +16,7 @@ services:
     image: consul
     container_name: client-1
     restart: always
-    command: "agent -node=client-1 -join=172.17.0.2"
+    command: "agent -node=client-1 -join=172.22.0.2"
 
   db:
     image: "postgres:14"
@@ -30,4 +30,4 @@ services:
       - "5432:5432"
     volumes:
       - ".postgres/.db:/var/lib/postgresql/data"
-    restart: unless-stopped
+    restart: always
